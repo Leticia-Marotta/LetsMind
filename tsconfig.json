@@ -1,0 +1,37 @@
+{
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["dom", "dom.iterable",  "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      // "@assets/*": ["src/assets/*"],
+      "@api/*": ["src/api/*"],
+      "@commons/*": ["src/commons/*"],
+      // "@components/*": ["src/components/*"],
+      "@contexts/*": ["src/contexts/*"],
+      // "@hooks/*": ["src/hooks/*"],
+      "@pages/*": ["src/pages/*"],
+      // "@styles/*": ["src/styles/*"],
+      // "@types/*": ["src/types/*"],
+      // "@utils/*": ["src/utils/*"],
+      "@games/*": ["src/games/*"]
+    }
+  },
+  "include": ["src"]
+}
