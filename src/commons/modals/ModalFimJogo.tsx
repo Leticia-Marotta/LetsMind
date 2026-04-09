@@ -1,17 +1,20 @@
 import { Modal, Box, Button, Typography } from "@mui/material";
 import { useNavigateToPage } from "src/hooks/useNavigateToPage";
+import { generateGamePDF } from "src/utils/generatePdf";
 const ModalFimJogos = ({
   isOpen,
   onClose,
-  texto,
   startTime,
   endTime,
+  erros,
+  gameName,
 }: {
   isOpen: boolean;
   onClose: any;
-  texto: string;
-  startTime: string,
-  endTime: string,
+  startTime: Date;
+  endTime: Date;
+  erros: number;
+  gameName: string;
 }) => {
   const navigate = useNavigateToPage();
   return (
@@ -20,16 +23,25 @@ const ModalFimJogos = ({
         <Box sx={style.header}>
           <Typography variant="h5">Fim de jogo!</Typography>
         </Box>
-        <Typography variant="h6">{texto}</Typography>
+        <Typography variant="h6">
+          Parabéns, você completou o jogo! Clique no botão abaixo para baixar o
+          seu relatório de desempenho.
+        </Typography>
+        <Button
+          onClick={() => {
+            generateGamePDF({
+              startTime,
+              endTime,
+              erros,
+              gameName,
+            });
+          }}
+        >
+          <Typography color="#cb6ce6" style={{ fontWeight: "bold" }}>
+            Baixar relatório
+          </Typography>
+        </Button>
         <Box sx={style.row}>
-          <Button
-            onClick={() => {
-              onClose();
-            }}
-            sx={style.cancelButton}
-          >
-            Fechar
-          </Button>
           <Button
             sx={style.confirmButton}
             onClick={() => {
@@ -38,6 +50,14 @@ const ModalFimJogos = ({
             }}
           >
             Confirmar
+          </Button>
+          <Button
+            onClick={() => {
+              onClose();
+            }}
+            sx={style.cancelButton}
+          >
+            Fechar
           </Button>
         </Box>
       </Box>

@@ -1,3 +1,4 @@
+import ModalFimJogos from "@commons/modals/ModalFimJogo";
 import ModalInfoJogos from "@commons/modals/ModalInfoJogo";
 import Toast from "@commons/Toast";
 import { AppContext } from "@contexts/AppContext";
@@ -19,8 +20,10 @@ export default function SquareLineGame() {
   const { nivel, setNivel, selectedJogo } = useContext(AppContext);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [errors, setErrors] = useState<number>(0);
   const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
-
   const stageRef = useRef<any>(null);
 
   // ===== NÍVEL =====
@@ -151,6 +154,8 @@ export default function SquareLineGame() {
   const validateLines = () => {
     if (lines.length !== modelLines.length) {
       setShowAlert(true);
+      setErrors((prev) => prev + 1);
+
       return;
     }
 
@@ -159,6 +164,7 @@ export default function SquareLineGame() {
     const userSet = new Set(lines.map(normalizeLine));
 
     if (modelSet.size !== userSet.size) {
+      setErrors((prev) => prev + 1);
       setShowAlert(true);
       return;
     }
@@ -166,6 +172,7 @@ export default function SquareLineGame() {
     for (let item of modelSet) {
       if (!userSet.has(item)) {
         setShowAlert(true);
+        setErrors((prev) => prev + 1);
         return;
       }
     }
@@ -177,7 +184,8 @@ export default function SquareLineGame() {
       setOpenModal(true);
       setNivel("dificil");
     } else if (nivel === "dificil") {
-      navigate("/");
+      setEndDate(new Date());
+      setOpenFinishModal(true);
     }
   };
 
@@ -261,12 +269,15 @@ export default function SquareLineGame() {
         </Layer>
       </Stage>
 
-      <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-        <Button variant="contained" onClick={() => validateLines()}>
-          Salvar
+      <Box sx={{ display: "flex", gap: 2 }}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={() => validateLines()}
+        >
+          Enviar
         </Button>
-
-        <Button variant="outlined" color="error" onClick={handleClear}>
+        <Button variant="contained" color="error" onClick={() => handleClear()}>
           Limpar
         </Button>
       </Box>
@@ -285,6 +296,16 @@ export default function SquareLineGame() {
         sobre={
           selectedJogo.niveis.find((item) => item.nivel === nivel)?.sobre ?? ""
         }
+      />
+      <ModalFimJogos
+        isOpen={openFinishModal}
+        onClose={() => {
+          setOpenFinishModal(false);
+        }}
+        endTime={endDate}
+        startTime={startDate}
+        gameName={selectedJogo.nome}
+        erros={errors}
       />
     </Box>
   );

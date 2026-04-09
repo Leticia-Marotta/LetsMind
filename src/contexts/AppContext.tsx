@@ -42,12 +42,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         {
           nivel: "facil",
           sobre:
-            "O Teste de Trilhas consiste em conectar, em ordem alfabética, as letras dispostas na tela. \n Para utilizar o teste, clique na letra desejada e arraste até a próxima letra desejada.\n Exemplo: A -> B ...",
+            "O Teste de Trilhas estimula a atenção, a memória de trabalho e a flexibilidade mental. Ao exigir que o usuário conecte elementos em uma sequência específica o cérebro é incentivado a se adaptar e organizar informações de forma eficiente. Essa prática contribui para melhorar o raciocínio, a concentração e o controle executivo, habilidades fundamentais para a realização de tarefas do dia a dia. \n Para utilizar o teste, clique na letra desejada e arraste até a próxima letra desejada.\n Exemplo: A -> B ...",
         },
         {
           nivel: "medio",
           sobre:
-            "O Teste de Trilhas consiste em conectar, em ordem alfabética e numérica, as letras dispostas na tela. \n Para utilizar o teste, clique na letra desejada e arraste até o próximo número desejado.\n Exemplo: A -> 1 -> B -> 2 ...",
+            "O Teste de Trilhas estimula a atenção, a memória de trabalho e a flexibilidade mental. Ao exigir que o usuário conecte elementos em uma sequência específica o cérebro é incentivado a se adaptar e organizar informações de forma eficiente. Essa prática contribui para melhorar o raciocínio, a concentração e o controle executivo, habilidades fundamentais para a realização de tarefas do dia a dia. \n Para utilizar o teste, clique na letra desejada e arraste até a próxima letra desejada.\n Exemplo: A -> B ...",
         },
         {
           nivel: "dificil",
@@ -105,7 +105,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     {
       id: 4,
       nome: "Reprodução de linhas",
-      logo: require("../assets/Quadrado.png"),
+      logo: require("../assets/LinhasQuadrado.png"),
       path: "/linhas-quadrado",
       niveis: [
         {
@@ -122,6 +122,52 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           nivel: "dificil",
           sobre:
             "A reprodução de linhas consiste em interligar os pontos do quadrado com linhas. Ele ajuda a treinar memória, concentração, rganização do pensamento, também estimula a coordenação entre visão e movimento. Para jogar você deve selecionar o ponto desejado e arrastar a linha vermelha até o próximo ponto, e assim em diante. No nível dificil são 8 linhas criadas",
+        },
+      ],
+    },
+    {
+      id: 4,
+      nome: "Colorindo Quadrados",
+      logo: require("../assets/ColorirQuadrado.png"),
+      path: "/colorir-quadrados",
+      niveis: [
+        {
+          nivel: "facil",
+          sobre:
+            "O colorir quadrados estimula a memória visual e a atenção, já que o usuário precisa observar e reproduzir corretamente o padrão de cores. Ele também trabalha o raciocínio espacial e o planejamento, ao exigir que a pessoa organize mentalmente onde cada cor deve ser aplicada. Além disso, a interação de arrastar e soltar contribui para a coordenação visuomotora, importante para diversas atividades do dia a dia. No nível fácil, é necessário colorir apenas 4 quadrados",
+        },
+        {
+          nivel: "medio",
+          sobre:
+            "O colorir quadrados estimula a memória visual e a atenção, já que o usuário precisa observar e reproduzir corretamente o padrão de cores. Ele também trabalha o raciocínio espacial e o planejamento, ao exigir que a pessoa organize mentalmente onde cada cor deve ser aplicada. Além disso, a interação de arrastar e soltar contribui para a coordenação visuomotora, importante para diversas atividades do dia a dia. No nível médio, é necessário colorir 6 quadrados.",
+        },
+        {
+          nivel: "dificil",
+          sobre:
+            "O colorir quadrados estimula a memória visual e a atenção, já que o usuário precisa observar e reproduzir corretamente o padrão de cores. Ele também trabalha o raciocínio espacial e o planejamento, ao exigir que a pessoa organize mentalmente onde cada cor deve ser aplicada. Além disso, a interação de arrastar e soltar contribui para a coordenação visuomotora, importante para diversas atividades do dia a dia. No nível difícil, é necessário colorir 8 quadrados.",
+        },
+      ],
+    },
+    {
+      id: 5,
+      nome: "Cor-respondência",
+      logo: require("../assets/CorRespondencia.png"),
+      path: "/cor-respondencia",
+      niveis: [
+        {
+          nivel: "facil",
+          sobre:
+            "Cor-respondência trabalha com a sua inibição de respostas, que é a capacidade de suprimir respostas automáticas e incorretas. O controle inibitório é um componente essencial da função executiva, ou seja, da capacidade que o cérebro possui de controlar ações e coordenar processos mentais para ajudar você a realizar seus objetivos. No nível fácil, são apresentadas 4 cores para correspondência.",
+        },
+        {
+          nivel: "medio",
+          sobre:
+            "Cor-respondência trabalha com a sua inibição de respostas, que é a capacidade de suprimir respostas automáticas e incorretas. O controle inibitório é um componente essencial da função executiva, ou seja, da capacidade que o cérebro possui de controlar ações e coordenar processos mentais para ajudar você a realizar seus objetivos. No nível médio, são apresentadas 6 cores para correspondência.",
+        },
+        {
+          nivel: "dificil",
+          sobre:
+            "Cor-respondência trabalha com a sua inibição de respostas, que é a capacidade de suprimir respostas automáticas e incorretas. O controle inibitório é um componente essencial da função executiva, ou seja, da capacidade que o cérebro possui de controlar ações e coordenar processos mentais para ajudar você a realizar seus objetivos. No nível difícil, são apresentadas 8 cores para correspondência.",
         },
       ],
     },
@@ -345,33 +391,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const testeListaPalavras: ITestePalavras[] = [
     {
       nivel: "facil",
-      palavras: [
-        "casa",
-        "bola",
-        "gato",
-        "árvore",
-        "livro",
-        "janela",
-        "carro",
-        "praia",
-        "computador",
-        "telefone",
-        "caneta",
-        "mesa",
-        "cadeira",
-        "sol",
-        "lua",
-      ],
+      palavras: ["casa", "bola", "gato", "árvore", "livro"],
     },
     { nivel: "medio", palavras: [] },
     { nivel: "dificil", palavras: [] },
   ];
 
-  const reproducaoDeQuadrados = [
-    {
-      nivel: "fácil",
-    },
-  ];
   return (
     <AppContext.Provider
       value={{

@@ -1,3 +1,4 @@
+import ModalFimJogos from "@commons/modals/ModalFimJogo";
 import ModalInfoJogos from "@commons/modals/ModalInfoJogo";
 import Toast from "@commons/Toast";
 import { AppContext } from "@contexts/AppContext";
@@ -15,11 +16,13 @@ const TesteTrilhas = () => {
   const [tempLine, setTempLine] = useState<Point[]>([]);
   const [order, setOrder] = useState<string[]>(["A"]);
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<Date>();
-  const [endTime, setEndTime] = useState<Date>();
+  const [startTime, setStartTime] = useState<Date>(new Date());
+  const [endTime, setEndTime] = useState<Date>(new Date());
+  const [erros, setErros] = useState<number>(0);
   const [letters, setLetters] = useState<string[]>([]);
   const stageRef = useRef<any>(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
   const [path, setPath] = useState<string>(selectedJogo.path);
 
   const clear = () => {
@@ -40,7 +43,8 @@ const TesteTrilhas = () => {
         setOpenModal(true);
         setNivel("dificil");
       } else if (nivel === "dificil") {
-        setPath("/");
+        setEndTime(new Date());
+        setOpenFinishModal(true);
       }
     }
   }, [order]);
@@ -83,7 +87,7 @@ const TesteTrilhas = () => {
   useEffect(() => {
     const minDistance = 60;
     const maxAttempts = 100;
-
+    setStartTime(new Date());
     const generatePoint = (existing: Point[]) => {
       let attempts = 0;
 
@@ -107,7 +111,6 @@ const TesteTrilhas = () => {
     };
 
     const newPoints: Point[] = [];
-    console.log(letters);
     letters.forEach(() => {
       newPoints.push(generatePoint(newPoints));
     });
@@ -135,12 +138,11 @@ const TesteTrilhas = () => {
     if (idx === currentIndex + 1) {
       setLines([...lines, [tempLine[0], points[idx]]]);
       setCurrentIndex(currentIndex + 1);
-      console.log(letters[idx]);
       setOrder([...order, letters[idx].toString()]);
     } else {
       setShowAlert(true);
+      setErros((prev) => prev + 1);
     }
-
     setTempLine([]);
   };
 
@@ -218,6 +220,16 @@ const TesteTrilhas = () => {
         sobre={
           selectedJogo.niveis.find((item) => item.nivel === nivel)?.sobre ?? ""
         }
+      />
+      <ModalFimJogos
+        endTime={endTime}
+        startTime={startTime}
+        isOpen={openFinishModal}
+        onClose={() => {
+          setOpenFinishModal(false);
+        }}
+        gameName={selectedJogo.nome}
+        erros={erros}
       />
     </Box>
   );

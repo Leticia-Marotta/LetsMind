@@ -13,7 +13,10 @@ const TesteListaPalavras = () => {
   const [answers, setAnswers] = useState<string[]>([]);
   const { testeListaPalavras, nivel, setNivel, selectedJogo } =
     useContext(AppContext);
-  const [path, setPath] = useState<string>(selectedJogo.path);
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [errors, setErrors] = useState<number>(0);
+  const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
 
   useEffect(() => {
     const palavrasObj = testeListaPalavras.filter(
@@ -49,7 +52,7 @@ const TesteListaPalavras = () => {
         setOpenModal(true);
         setNivel("dificil");
       } else if (nivel === "dificil") {
-        setPath("/");
+        setOpenFinishModal(true);
       }
     }
   }, [answers]);
@@ -64,7 +67,6 @@ const TesteListaPalavras = () => {
   const isCorrect = (word: string) =>
     selectedWords.includes(word.toLowerCase());
 
-  console.log(phase);
   return (
     <Box sx={style.container}>
       <Box sx={style.title}>

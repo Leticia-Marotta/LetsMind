@@ -19,9 +19,13 @@ const NomeacaoBoston = () => {
   const [index, setIndex] = useState<number>(0);
   const [resposta, setResposta] = useState<string>("");
   const [showDicaSemantica, setShowDicaSemantica] = useState<boolean>(false);
-  const [tentativas, setTentativas] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>("");
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [errors, setErrors] = useState<number>(0);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
 
   const item = nomeacaoBoston.filter((item) => {
     return item.nivel === nivel;
@@ -30,7 +34,7 @@ const NomeacaoBoston = () => {
   const speak = () => {
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(item.dicaFonetica);
-      utterance.lang = "pt-BR"; // Define o idioma
+      utterance.lang = "pt-BR";
       window.speechSynthesis.speak(utterance);
     } else {
       alert("Seu navegador não suporta a Web Speech API");
@@ -43,7 +47,7 @@ const NomeacaoBoston = () => {
 
     if (correto) {
       setShowAlert(true);
-      setFeedback("✅ Nomeação correta!");
+      setFeedback("Nomeação correta!");
       setTimeout(() => {
         setFeedback("");
         setResposta("");
@@ -52,7 +56,9 @@ const NomeacaoBoston = () => {
       }, 2000);
       return;
     } else {
-      setFeedback("❌ Não foi dessa vez, tente novamente!");
+      setErrors((prev) => prev + 1);
+      setShowAlert(true);
+      setFeedback("Não foi dessa vez, tente novamente!");
     }
   };
 

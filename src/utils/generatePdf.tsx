@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 import { getBase64FromImageUrl } from "./utls";
-import logo from "../../src/assets/logo.png"
+
 interface ReportData {
   startTime: Date;
   endTime: Date;
@@ -23,7 +23,7 @@ export const generateGamePDF = async ({
   // =========================
 
   // Logo
-  const base64Logo = await getBase64FromImageUrl(logo);
+  const base64Logo = await getBase64FromImageUrl(require("../assets/logo.png"));
 
   doc.addImage(base64Logo, "PNG", 14, 10, 30, 30);
 
@@ -31,13 +31,6 @@ export const generateGamePDF = async ({
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
   doc.text(gameName, pageWidth / 2, 20, { align: "center" });
-
-  // Data geração
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text(`Gerado em: ${new Date().toLocaleString()}`, pageWidth - 14, 20, {
-    align: "right",
-  });
 
   // Linha divisória
   doc.setDrawColor(200);

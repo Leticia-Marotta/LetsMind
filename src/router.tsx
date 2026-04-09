@@ -6,6 +6,8 @@ import TesteTrilhas from "./game/TesteTrilhas";
 import NomeacaoBoston from "./game/NomeacaoBoston";
 import TesteListaPalavras from "./game/TesteListaPalavras";
 import LinhasQuadrado from "./game/LinhasQuadrados";
+import ColorirQuadrados from "./game/ColorirQuadrados";
+import CorRespondencia from "./game/CorRespondencia";
 
 type TRouterType = {
   title: string;
@@ -31,13 +33,27 @@ const SCREENS: TRouterType[] = [
     path: "/linhas-quadrado",
     element: <LinhasQuadrado />,
   },
+  {
+    title: "Colorir Quadrados",
+    path: "/colorir-quadrados",
+    element: <ColorirQuadrados />,
+  },
+  {
+    title: "Cor-Respondência",
+    path: "/cor-respondencia",
+    element: <CorRespondencia />,
+  },
+
 ];
 
 export type TValidPaths =
   | "/"
   | "/teste-trilhas"
   | "/nomeacao-boston"
-  | "/teste-lista-palavras";
+  | "/teste-lista-palavras"
+  | "/linhas-quadrado"
+  | "/colorir-quadrados"
+  | "/cor-respondencia";
 
 const Router = () => {
   return (
