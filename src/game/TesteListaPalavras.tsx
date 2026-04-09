@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Box, TextField, Typography, List, ListItem } from "@mui/material";
 import { AppContext } from "@contexts/AppContext";
+// import ModalFimJogos from "@commons/modals/ModalFimJogo";
 
 type Phase = "showing" | "answering";
 
@@ -8,21 +9,22 @@ const TesteListaPalavras = () => {
   const [phase, setPhase] = useState<Phase>("showing");
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  // const [openModal, setOpenModal] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
   const [answers, setAnswers] = useState<string[]>([]);
-  const { testeListaPalavras, nivel, setNivel, selectedJogo } =
+  const { testeListaPalavras, nivel } =
     useContext(AppContext);
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>(new Date());
-  const [errors, setErrors] = useState<number>(0);
-  const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
+  // const [startDate, setStartDate] = useState<Date>(new Date());
+  // const [endDate, setEndDate] = useState<Date>(new Date());
+  // const [errors, setErrors] = useState<number>(0);
+  // const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
 
   useEffect(() => {
     const palavrasObj = testeListaPalavras.filter(
       (item) => item.nivel === nivel,
     )[0];
     setSelectedWords(palavrasObj ? palavrasObj.palavras : []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Controla a exibição das palavras (2 segundos cada)
@@ -43,19 +45,19 @@ const TesteListaPalavras = () => {
     }
   }, [currentIndex, phase, selectedWords]);
 
-  useEffect(() => {
-    if (answers.length === 10) {
-      if (nivel === "facil") {
-        setOpenModal(true);
-        setNivel("medio");
-      } else if (nivel === "medio") {
-        setOpenModal(true);
-        setNivel("dificil");
-      } else if (nivel === "dificil") {
-        setOpenFinishModal(true);
-      }
-    }
-  }, [answers]);
+  // useEffect(() => {
+  //   if (answers.length === 10) {
+  //     if (nivel === "facil") {
+  //       setOpenModal(true);
+  //       setNivel("medio");
+  //     } else if (nivel === "medio") {
+  //       setOpenModal(true);
+  //       setNivel("dificil");
+  //     } else if (nivel === "dificil") {
+  //       // setOpenFinishModal(true);
+  //     }
+  //   }
+  // }, [answers]);
 
   const handleSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim()) {
@@ -101,6 +103,14 @@ const TesteListaPalavras = () => {
           </List>
         </>
       )}
+      {/* <ModalFimJogos
+        isOpen={openFinishModal}
+        onClose={() => setOpenFinishModal(false)}
+        endTime={endDate}
+        startTime={startDate}
+        gameName={selectedJogo.nome}
+        erros={errors}
+      /> */}
     </Box>
   );
 };

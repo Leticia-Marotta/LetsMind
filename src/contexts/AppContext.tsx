@@ -1,5 +1,5 @@
 import { IJogos, INomeacaoBoston, ITestePalavras } from "@api/jogo-interface";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 type AppContextType = {
   isLoading: boolean;

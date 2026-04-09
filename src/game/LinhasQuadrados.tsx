@@ -3,9 +3,8 @@ import ModalInfoJogos from "@commons/modals/ModalInfoJogo";
 import Toast from "@commons/Toast";
 import { AppContext } from "@contexts/AppContext";
 import { Box, Typography, Button } from "@mui/material";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Stage, Layer, Line, Circle } from "react-konva";
-import { useNavigateToPage } from "src/hooks/useNavigateToPage";
 
 const SIZE = 250;
 const GAP = 100;
@@ -15,8 +14,6 @@ const STAGE_HEIGHT = SIZE + 150;
 type Point = { x: number; y: number };
 
 export default function SquareLineGame() {
-  const navigate = useNavigateToPage();
-
   const { nivel, setNivel, selectedJogo } = useContext(AppContext);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -109,8 +106,10 @@ export default function SquareLineGame() {
   } | null>(null);
 
   useEffect(() => {
+    setStartDate(new Date());
     setModelLines(generateConnectedLines(modelPoints));
     setLines([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nivel]);
 
   // ===== INTERAÇÃO =====

@@ -8,24 +8,22 @@ import {
   Card,
 } from "@mui/material";
 import { AppContext } from "@contexts/AppContext";
-import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import AbcIcon from "@mui/icons-material/Abc";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import Toast from "@commons/Toast";
 
 const NomeacaoBoston = () => {
-  const { nivel, setNivel, selectedJogo, nomeacaoBoston } =
-    useContext(AppContext);
+  const { nivel, nomeacaoBoston } = useContext(AppContext);
   const [index, setIndex] = useState<number>(0);
   const [resposta, setResposta] = useState<string>("");
   const [showDicaSemantica, setShowDicaSemantica] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<string>("");
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>(new Date());
-  const [errors, setErrors] = useState<number>(0);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
+  // const [startDate, setStartDate] = useState<Date>(new Date());
+  // const [endDate, setEndDate] = useState<Date>(new Date());
+  // const [errors, setErrors] = useState<number>(0);
+  // const [openModal, setOpenModal] = useState<boolean>(false);
+  // const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
 
   const item = nomeacaoBoston.filter((item) => {
     return item.nivel === nivel;
@@ -56,7 +54,7 @@ const NomeacaoBoston = () => {
       }, 2000);
       return;
     } else {
-      setErrors((prev) => prev + 1);
+      // setErrors((prev) => prev + 1);
       setShowAlert(true);
       setFeedback("Não foi dessa vez, tente novamente!");
     }
