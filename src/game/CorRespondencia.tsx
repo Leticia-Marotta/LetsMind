@@ -71,6 +71,7 @@ const CorRespondencia = () => {
   };
 
   useEffect(() => {
+    setStartDate(new Date())
     generateRound();
   }, [nivel]);
 
@@ -160,9 +161,6 @@ const CorRespondencia = () => {
           setOpenModal(false);
         }}
         path={selectedJogo.path}
-        sobre={
-          selectedJogo.niveis.find((item) => item.nivel === nivel)?.sobre ?? ""
-        }
       />
       <ModalFimJogos
         isOpen={openFinishModal}
@@ -172,7 +170,8 @@ const CorRespondencia = () => {
         endTime={endDate}
         startTime={startDate}
         erros={errors}
-        gameName={selectedJogo.nome}
+        dicaFonetica={0}
+        dicaSemantica={0}
       />
     </Box>
   );

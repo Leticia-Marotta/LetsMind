@@ -28,7 +28,6 @@ const ColorirQuadrados = () => {
   const [dragColor, setDragColor] = useState<string | null>(null);
 
   const clearGrid = () => {
-    setErrors((prev) => prev + 1);
     setGrid(
       Array.from({ length: rows }, () =>
         Array.from({ length: cols }, () => null),
@@ -109,47 +108,56 @@ const ColorirQuadrados = () => {
   };
 
   const validate = () => {
-    let errors = 0;
+    let localErrors = 0;
+
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const modelCell = model[r][c];
         const userCell = grid[r][c];
 
+        // célula deveria estar pintada
         if (modelCell !== null) {
           if (userCell !== modelCell) {
-            errors++;
-            setMessage("Ops, os padrões estão diferentes!");
-            setShowAlert(true);
-            return false;
+            localErrors++;
           }
         }
 
+        // célula não deveria estar pintada
         if (modelCell === null && userCell !== null) {
-          errors++;
-          setMessage("Ops, os padrões estão diferentes!");
-          setShowAlert(true);
-          return false;
+          localErrors++;
         }
       }
     }
 
+    // adiciona no state
+    setErrors((prev) => prev + localErrors);
+
+    // feedback
+    if (localErrors > 0) {
+      setMessage(`Ops! Você teve ${localErrors} erro(s)!`);
+
+      setShowAlert(true);
+    }
+
+    // níveis
     if (nivel === "facil") {
       setOpenModal(true);
       setNivel("medio");
+
       generateRandomModel();
       clearGrid();
     } else if (nivel === "medio") {
       setOpenModal(true);
       setNivel("dificil");
+
       generateRandomModel();
       clearGrid();
     } else if (nivel === "dificil") {
-      setErrors(errors);
       setEndTime(new Date());
       setOpenFinishModal(true);
     }
 
-    return true;
+    return localErrors === 0;
   };
 
   useEffect(() => {
@@ -167,7 +175,7 @@ const ColorirQuadrados = () => {
       setStartTime(new Date());
       generateRandomModel();
     }
-  }, []);
+  }, [nivel]);
 
   return (
     <Box sx={style.container}>
@@ -240,11 +248,18 @@ const ColorirQuadrados = () => {
         </Layer>
       </Stage>
       <Box sx={{ display: "flex", gap: 2 }}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => {
+            clearGrid();
+            setErrors((prev) => prev + 1);
+          }}
+        >
+          Limpar
+        </Button>
         <Button variant="contained" color="success" onClick={() => validate()}>
           Enviar
-        </Button>
-        <Button variant="contained" color="error" onClick={() => clearGrid()}>
-          Limpar
         </Button>
       </Box>
       <Toast
@@ -259,9 +274,6 @@ const ColorirQuadrados = () => {
           setOpenModal(false);
         }}
         path={selectedJogo.path}
-        sobre={
-          selectedJogo.niveis.find((item) => item.nivel === nivel)?.sobre ?? ""
-        }
       />
       <ModalFimJogos
         isOpen={openFinishModal}
@@ -271,7 +283,8 @@ const ColorirQuadrados = () => {
         endTime={endTime}
         startTime={startTime}
         erros={errors}
-        gameName={selectedJogo.nome}
+        dicaFonetica={0}
+        dicaSemantica={0}
       />
     </Box>
   );

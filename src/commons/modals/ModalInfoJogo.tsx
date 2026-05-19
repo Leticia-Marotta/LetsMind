@@ -1,26 +1,33 @@
 import { Modal, Box, Button, Typography } from "@mui/material";
 import { useNavigateToPage } from "src/hooks/useNavigateToPage";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
+import { useContext } from "react";
+import { AppContext } from "@contexts/AppContext";
 const ModalInfoJogos = ({
   isOpen,
   onClose,
-  sobre,
   path,
 }: {
   isOpen: boolean;
   onClose: any;
-  sobre: string;
   path: string;
 }) => {
   const navigate = useNavigateToPage();
+  const { selectedJogo, nivel } = useContext(AppContext);
   return (
     <Modal open={isOpen} onClose={onClose} component="div">
       <Box sx={style.container}>
         <Box sx={style.header}>
           <InfoOutlineIcon />
-          <Typography variant="h5">Sobre</Typography>
+          <Typography variant="h5">Sobre - Nível {nivel}</Typography>
         </Box>
-        <Typography variant="h6">{sobre}</Typography>
+        {nivel === "facil" && (
+          <Typography variant="h6">{selectedJogo.sobre}</Typography>
+        )}
+
+        <Typography variant="h6">
+          {selectedJogo.niveis?.find((item) => item.nivel === nivel)?.sobre}
+        </Typography>
         <Box sx={style.row}>
           <Button
             onClick={() => {

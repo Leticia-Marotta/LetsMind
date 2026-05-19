@@ -1,73 +1,194 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, TextField, Typography, List, ListItem } from "@mui/material";
-import { AppContext } from "@contexts/AppContext";
-// import ModalFimJogos from "@commons/modals/ModalFimJogo";
+import {
+  Box,
+  TextField,
+  Typography,
+  List,
+  ListItem,
+  Button,
+} from "@mui/material";
 
-type Phase = "showing" | "answering";
+import { AppContext } from "@contexts/AppContext";
+import ModalInfoJogos from "@commons/modals/ModalInfoJogo";
+import ModalFimJogos from "@commons/modals/ModalFimJogo";
+
+type Phase = "idle" | "showing" | "answering";
+
+const WORDS_PER_GAME = 5;
 
 const TesteListaPalavras = () => {
-  const [phase, setPhase] = useState<Phase>("showing");
+  const { testeListaPalavras, nivel, setNivel } = useContext(AppContext);
+
+  const [phase, setPhase] = useState<Phase>("idle");
+
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  // const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const [openFimJogo, setOpenFimJogo] = useState<boolean>(false);
+
   const [inputValue, setInputValue] = useState<string>("");
+
   const [answers, setAnswers] = useState<string[]>([]);
-  const { testeListaPalavras, nivel } =
-    useContext(AppContext);
-  // const [startDate, setStartDate] = useState<Date>(new Date());
-  // const [endDate, setEndDate] = useState<Date>(new Date());
-  // const [errors, setErrors] = useState<number>(0);
-  // const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
 
+  const [startDate, setStartDate] = useState<Date>(new Date());
+
+  const [endDate, setEndDate] = useState<Date>(new Date());
+
+  const [errors, setErrors] = useState<number>(0);
+
+  /**
+   * Embaralha array
+   */
+  const shuffleArray = (array: string[]) => {
+    return [...array].sort(() => Math.random() - 0.5);
+  };
+
+  /**
+   * Remove acentos
+   */
+  const normalizeText = (text: string) => {
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  };
+
+  /**
+   * Seleciona 5 palavras aleatórias
+   */
+  const generateWords = () => {
+    const palavrasObj = testeListaPalavras.find((item) => item.nivel === nivel);
+
+    if (!palavrasObj) return;
+
+    const shuffled = shuffleArray(palavrasObj.palavras);
+
+    const randomWords = shuffled.slice(0, WORDS_PER_GAME);
+
+    setSelectedWords(randomWords);
+
+    // reset
+    setCurrentIndex(0);
+    setAnswers([]);
+    setInputValue("");
+    setPhase("idle");
+  };
+
+  /**
+   * Gera palavras ao trocar nível
+   */
   useEffect(() => {
-    const palavrasObj = testeListaPalavras.filter(
-      (item) => item.nivel === nivel,
-    )[0];
-    setSelectedWords(palavrasObj ? palavrasObj.palavras : []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    generateWords();
+  }, [nivel]);
 
-  // Controla a exibição das palavras (2 segundos cada)
+  /**
+   * Iniciar jogo
+   */
+  const startGame = () => {
+    setStartDate(new Date());
+    setCurrentIndex(0);
+    setPhase("showing");
+  };
+
+  /**
+   * Exibição das palavras
+   */
   useEffect(() => {
-    if (selectedWords.length > 0) {
-      if (phase !== "showing") return;
+    if (selectedWords.length === 0) return;
 
-      if (currentIndex >= selectedWords.length) {
-        setPhase("answering");
-        return;
-      }
+    if (phase !== "showing") return;
 
-      const timer = setTimeout(() => {
-        setCurrentIndex((prev) => prev + 1);
-      }, 2000);
-
-      return () => clearTimeout(timer);
+    if (currentIndex >= selectedWords.length) {
+      setPhase("answering");
+      return;
     }
+
+    const timer = setTimeout(() => {
+      setCurrentIndex((prev) => prev + 1);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, [currentIndex, phase, selectedWords]);
 
-  // useEffect(() => {
-  //   if (answers.length === 10) {
-  //     if (nivel === "facil") {
-  //       setOpenModal(true);
-  //       setNivel("medio");
-  //     } else if (nivel === "medio") {
-  //       setOpenModal(true);
-  //       setNivel("dificil");
-  //     } else if (nivel === "dificil") {
-  //       // setOpenFinishModal(true);
-  //     }
-  //   }
-  // }, [answers]);
-
+  /**
+   * ENTER
+   */
   const handleSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && inputValue.trim()) {
-      setAnswers((prev) => [...prev, inputValue.trim().toLowerCase()]);
-      setInputValue("");
+    if (e.key === "Enter") {
+      addAnswer();
     }
   };
 
-  const isCorrect = (word: string) =>
-    selectedWords.includes(word.toLowerCase());
+  /**
+   * Adiciona resposta
+   */
+  const addAnswer = () => {
+    if (!inputValue.trim()) return;
+
+    const normalizedInput = normalizeText(inputValue);
+
+    const alreadyAnswered = answers.some(
+      (item) => normalizeText(item) === normalizedInput,
+    );
+
+    if (alreadyAnswered) {
+      setInputValue("");
+      return;
+    }
+
+    setAnswers((prev) => [...prev, inputValue.trim()]);
+
+    setInputValue("");
+  };
+
+  /**
+   * Palavra correta
+   */
+  const isCorrect = (word: string) => {
+    return selectedWords.some(
+      (item) => normalizeText(item) === normalizeText(word),
+    );
+  };
+
+  /**
+   * Finalizar tentativa
+   */
+  const finishGame = () => {
+    setEndDate(new Date());
+
+    let currentErrors = 0;
+
+    // respostas erradas
+    answers.forEach((answer) => {
+      if (!isCorrect(answer)) {
+        currentErrors++;
+      }
+    });
+
+    // palavras faltando
+    const correctAnswers = answers.filter((answer) => isCorrect(answer)).length;
+
+    const missingWords = selectedWords.length - correctAnswers;
+
+    currentErrors += missingWords;
+
+    setErrors((prev) => prev + currentErrors);
+
+    // níveis
+    if (nivel === "facil") {
+      setOpenModal(true);
+      setNivel("medio");
+    } else if (nivel === "medio") {
+      setOpenModal(true);
+      setNivel("dificil");
+    } else {
+      setOpenFimJogo(true);
+    }
+  };
 
   return (
     <Box sx={style.container}>
@@ -76,19 +197,38 @@ const TesteListaPalavras = () => {
           Teste Lista de Palavras - Nível {nivel}
         </Typography>
       </Box>
-      {phase === "showing" && (
-        <Typography variant="h4">{selectedWords[currentIndex]}</Typography>
+
+      {/* ===== INÍCIO ===== */}
+      {phase === "idle" && (
+        <Button variant="contained" onClick={startGame} sx={style.button}>
+          Iniciar
+        </Button>
       )}
 
+      {/* ===== MOSTRANDO ===== */}
+      {phase === "showing" && currentIndex < selectedWords.length && (
+        <Typography variant="h3" fontWeight="bold">
+          {selectedWords[currentIndex]}
+        </Typography>
+      )}
+
+      {/* ===== RESPOSTAS ===== */}
       {phase === "answering" && (
         <>
+          <Typography variant="h6">
+            Restam {selectedWords.length - answers.length} palavras
+          </Typography>
+
           <TextField
             fullWidth
             label="Digite as palavras lembradas"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleSubmit}
-            sx={{ mb: 2 }}
+            sx={{
+              mb: 2,
+              maxWidth: 500,
+            }}
           />
 
           <List sx={style.listItem}>
@@ -101,16 +241,34 @@ const TesteListaPalavras = () => {
               </ListItem>
             ))}
           </List>
+
+          <Box sx={style.buttonsRow}>
+            <Button variant="contained" color="info" onClick={addAnswer}>
+              Adicionar
+            </Button>
+
+            <Button variant="contained" color="success" onClick={finishGame}>
+              Enviar
+            </Button>
+          </Box>
         </>
       )}
-      {/* <ModalFimJogos
-        isOpen={openFinishModal}
-        onClose={() => setOpenFinishModal(false)}
+
+      <ModalInfoJogos
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        path={"/teste-lista-palavras"}
+      />
+
+      <ModalFimJogos
+        isOpen={openFimJogo}
+        onClose={() => setOpenFimJogo(false)}
+        erros={errors}
         endTime={endDate}
         startTime={startDate}
-        gameName={selectedJogo.nome}
-        erros={errors}
-      /> */}
+        dicaFonetica={0}
+        dicaSemantica={0}
+      />
     </Box>
   );
 };
@@ -126,30 +284,53 @@ const style = {
     flexDirection: "column",
     gap: 2,
   },
+
   title: {
     backgroundColor: "#cb6ce6",
     p: 2,
     color: "white",
     borderRadius: 8,
   },
+
+  buttonsRow: {
+    display: "flex",
+    gap: 2,
+    mb: 2,
+  },
+
+  button: {
+    backgroundColor: "#9dd5f1",
+    color: "black",
+    height: "50px",
+    width: "100px",
+    borderRadius: "100px",
+  },
+
   listItem: {
     display: "flex",
     flexDirection: "row",
     gap: 2,
+    flexWrap: "wrap",
+    justifyContent: "center",
+    maxWidth: 700,
   },
+
   correct: {
     border: "1px solid green",
     borderRadius: "16px",
     color: "green",
     fontWeight: "bold",
-    fontsize: 16,
+    fontSize: 16,
+    width: "fit-content",
   },
+
   wrong: {
     border: "1px solid red",
     borderRadius: "16px",
     color: "red",
     fontWeight: "bold",
-    fontsize: 16,
+    fontSize: 16,
+    width: "fit-content",
   },
 };
 

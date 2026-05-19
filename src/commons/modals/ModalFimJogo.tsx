@@ -1,22 +1,28 @@
+import { AppContext } from "@contexts/AppContext";
 import { Modal, Box, Button, Typography } from "@mui/material";
+import { useContext } from "react";
 import { useNavigateToPage } from "src/hooks/useNavigateToPage";
 import { generateGamePDF } from "src/utils/generatePdf";
+
 const ModalFimJogos = ({
+  dicaSemantica,
+  dicaFonetica,
   isOpen,
   onClose,
   startTime,
   endTime,
   erros,
-  gameName,
 }: {
   isOpen: boolean;
   onClose: any;
   startTime: Date;
   endTime: Date;
   erros: number;
-  gameName: string;
+  dicaSemantica: number;
+  dicaFonetica: number;
 }) => {
   const navigate = useNavigateToPage();
+  const { selectedJogo } = useContext(AppContext);
   return (
     <Modal open={isOpen} onClose={onClose} component="div">
       <Box sx={style.container}>
@@ -28,12 +34,14 @@ const ModalFimJogos = ({
           seu relatório de desempenho.
         </Typography>
         <Button
-          onClick={() => {
-            generateGamePDF({
+          onClick={async () => {
+            await generateGamePDF({
               startTime,
               endTime,
               erros,
-              gameName,
+              selectedJogo,
+              dicaSemantica,
+              dicaFonetica,
             });
           }}
         >
@@ -54,6 +62,7 @@ const ModalFimJogos = ({
           <Button
             onClick={() => {
               onClose();
+              navigate("/");
             }}
             sx={style.cancelButton}
           >

@@ -23,7 +23,6 @@ const TesteTrilhas = () => {
   const stageRef = useRef<any>(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
-  const [path, setPath] = useState<string>(selectedJogo.path);
 
   const clear = () => {
     setCurrentIndex(0);
@@ -216,10 +215,7 @@ const TesteTrilhas = () => {
         onClose={() => {
           setOpenModal(false);
         }}
-        path={path}
-        sobre={
-          selectedJogo.niveis.find((item) => item.nivel === nivel)?.sobre ?? ""
-        }
+        path={selectedJogo.path}
       />
       <ModalFimJogos
         endTime={endTime}
@@ -228,8 +224,9 @@ const TesteTrilhas = () => {
         onClose={() => {
           setOpenFinishModal(false);
         }}
-        gameName={selectedJogo.nome}
         erros={erros}
+        dicaFonetica={0}
+        dicaSemantica={0}
       />
     </Box>
   );

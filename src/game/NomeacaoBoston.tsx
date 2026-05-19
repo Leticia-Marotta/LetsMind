@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -11,27 +11,29 @@ import { AppContext } from "@contexts/AppContext";
 import AbcIcon from "@mui/icons-material/Abc";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import Toast from "@commons/Toast";
+import ModalInfoJogos from "@commons/modals/ModalInfoJogo";
+import ModalFimJogos from "@commons/modals/ModalFimJogo";
 
 const NomeacaoBoston = () => {
-  const { nivel, nomeacaoBoston } = useContext(AppContext);
+  const { nivel, nomeacaoBoston, setNivel, selectedJogo } =
+    useContext(AppContext);
   const [index, setIndex] = useState<number>(0);
   const [resposta, setResposta] = useState<string>("");
   const [showDicaSemantica, setShowDicaSemantica] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<string>("");
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  // const [startDate, setStartDate] = useState<Date>(new Date());
-  // const [endDate, setEndDate] = useState<Date>(new Date());
-  // const [errors, setErrors] = useState<number>(0);
-  // const [openModal, setOpenModal] = useState<boolean>(false);
-  // const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
-
-  const item = nomeacaoBoston.filter((item) => {
-    return item.nivel === nivel;
-  })[index];
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [errors, setErrors] = useState<number>(0);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
+  const [items, setItems] = useState<any[]>([]);
+  const [numberDicaSemantica, setNumberDicaSemantica] = useState<number>(0);
+  const [numberDicaFonetica, setNumberDicaFonetica] = useState<number>(0);
 
   const speak = () => {
     if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(item.dicaFonetica);
+      const utterance = new SpeechSynthesisUtterance(items[index].dicaFonetica);
       utterance.lang = "pt-BR";
       window.speechSynthesis.speak(utterance);
     } else {
@@ -39,77 +41,134 @@ const NomeacaoBoston = () => {
     }
   };
 
+  const normalizeText = (text: string) => {
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  };
+
   const validar = () => {
     const correto =
-      resposta.trim().toLowerCase() === item.palavra.toLowerCase();
+      normalizeText(resposta) === normalizeText(items[index].palavra);
 
     if (correto) {
-      setShowAlert(true);
-      setFeedback("Nomeação correta!");
-      setTimeout(() => {
-        setFeedback("");
-        setResposta("");
-        setShowDicaSemantica(false);
-        setIndex(index + 1);
-      }, 2000);
+      setFeedback("");
+      setResposta("");
+      setShowDicaSemantica(false);
+      setIndex((prev) => prev + 1);
       return;
     } else {
-      // setErrors((prev) => prev + 1);
+      setErrors((prev) => prev + 1);
       setShowAlert(true);
       setFeedback("Não foi dessa vez, tente novamente!");
     }
   };
 
-  if (index >= nomeacaoBoston.length) {
-    return <Typography variant="h5">✅ Teste concluído!</Typography>;
-  }
+  useEffect(() => {
+    setStartDate(new Date());
+  }, []);
 
+  useEffect(() => {
+    if (index >= items.length && items.length > 0) {
+      setEndDate(new Date());
+      if (nivel === "facil") {
+        setOpenModal(true);
+        setNivel("medio");
+      } else if (nivel === "medio") {
+        setOpenModal(true);
+        setNivel("dificil");
+      } else if (nivel === "dificil") {
+        setEndDate(new Date());
+        setOpenFinishModal(true);
+      }
+    }
+  }, [index]);
+
+  const shuffleArray = (array: any[]) => {
+    return [...array].sort(() => Math.random() - 0.5);
+  };
+
+  useEffect(() => {
+    const filtered = nomeacaoBoston.filter((item) => item.nivel === nivel);
+    setItems(shuffleArray(filtered));
+    setIndex(0);
+  }, [nivel]);
+
+  // console.log(item);
   return (
     <Box sx={style.container}>
-      <Box sx={style.title}>
-        <Typography variant="h4">Teste de Trilhas - Nível {nivel}</Typography>
-      </Box>
-      <Card sx={style.card}>
-        <img
-          src={item.imagem}
-          alt="figura"
-          style={{ width: 160, height: 160 }}
-        />
-      </Card>
-      <Box sx={style.row}>
-        <Box sx={style.inputBox}>
-          <Typography>Qual o nome do objeto acima?</Typography>
-          <TextField
-            label="Nome"
-            value={resposta}
-            onChange={(e) => setResposta(e.target.value)}
-          />
-        </Box>
-        <Button sx={style.buttonSend} onClick={validar}>
-          Enviar
-        </Button>
-      </Box>
-      {showDicaSemantica && (
-        <Typography variant="h5">
-          Dica semantica: {item.dicaSemantica}
-        </Typography>
+      {items[index] && (
+        <>
+          {" "}
+          <Box sx={style.title}>
+            <Typography variant="h4">
+              Teste de Trilhas - Nível {nivel}
+            </Typography>
+          </Box>
+          <Card sx={style.card}>
+            <img src={items[index].imagem} alt="figura" />
+          </Card>
+          <Box sx={style.row}>
+            <Box sx={style.inputBox}>
+              <Typography>Qual o nome do objeto acima?</Typography>
+              <TextField
+                label="Nome"
+                value={resposta}
+                onChange={(e) => setResposta(e.target.value)}
+              />
+            </Box>
+            <Button sx={style.buttonSend} onClick={validar}>
+              Enviar
+            </Button>
+          </Box>
+          {showDicaSemantica && (
+            <Typography variant="h5">
+              Dica semantica: {items[index].dicaSemantica}
+            </Typography>
+          )}
+          <Divider variant="fullWidth" style={{ width: "30%" }} />
+          <Box sx={style.row}>
+            <Button
+              sx={style.dicasButton}
+              onClick={() => {
+                setNumberDicaSemantica((prev) => prev + 1);
+                setShowDicaSemantica(true);
+              }}
+            >
+              <AbcIcon sx={{ fontSize: "35px" }} />
+              <Typography>Dica semântica</Typography>
+            </Button>
+            <Button
+              sx={style.dicasButton}
+              onClick={() => {
+                setNumberDicaFonetica((prev) => prev + 1);
+                speak();
+              }}
+            >
+              <VolumeUpIcon sx={{ fontSize: "25px" }} />
+              <Typography>Dica fonética</Typography>
+            </Button>
+          </Box>
+        </>
       )}
-      <Divider variant="fullWidth" style={{ width: "30%" }} />
-      <Box sx={style.row}>
-        <Button
-          sx={style.dicasButton}
-          onClick={() => {
-            setShowDicaSemantica(true);
-          }}
-        >
-          <AbcIcon sx={{ fontSize: "35px" }} />
-          <Typography>Dica semântica</Typography>
-        </Button>
-        <Button sx={style.dicasButton} onClick={() => speak()}>
-          <VolumeUpIcon sx={{ fontSize: "25px" }} />
-          <Typography>Dica fonética</Typography>
-        </Button>
-      </Box>
+      <ModalInfoJogos
+        isOpen={openModal}
+        onClose={() => {
+          setOpenModal(false);
+        }}
+        path={selectedJogo.path}
+      />
+      <ModalFimJogos
+        isOpen={openFinishModal}
+        endTime={endDate}
+        startTime={startDate}
+        erros={errors}
+        onClose={() => setOpenFinishModal(false)}
+        dicaFonetica={numberDicaFonetica}
+        dicaSemantica={numberDicaSemantica}
+      />
       <Toast
         open={showAlert}
         text={feedback}

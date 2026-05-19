@@ -1,4 +1,4 @@
-import ModalNiveis from "@commons/modals/ModalNiveis";
+import ModalInfoJogos from "@commons/modals/ModalInfoJogo";
 import { AppContext } from "@contexts/AppContext";
 import {
   Box,
@@ -8,18 +8,23 @@ import {
   CardMedia,
   CardContent,
   Typography,
+  colors,
 } from "@mui/material";
-import { useContext, useState } from "react";
-import { useNavigateToPage } from "src/hooks/useNavigateToPage";
+import { useContext, useEffect, useState } from "react";
 
 const HomePage = () => {
-  const { jogos, setSelectedJogo } = useContext(AppContext);
-  const navigate = useNavigateToPage();
-  const [openMenuNiveis, setOpenMenuNiveis] = useState<boolean>(false);
+  const { jogos, setSelectedJogo, selectedJogo, nivel, setNivel } =
+    useContext(AppContext);
+  const [openModalInfo, setOpenModalInfo] = useState<boolean>(false);
+
+  useEffect(() => {
+    setNivel("facil");
+  }, [nivel]);
+
 
   return (
     <Box sx={style.container}>
-      <img src={require("../assets/logo.png")} alt="Logo" width={"20%"} />
+      <img src={require("../assets/logo.png")} alt="Logo" width={"20%"} style={{minWidth: '150px'}}/>
       <Grid container justifyContent="center" alignItems="center" spacing={2}>
         {jogos.map((jogo) => (
           <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={jogo.id}>
@@ -27,13 +32,13 @@ const HomePage = () => {
               sx={style.card}
               onClick={() => {
                 setSelectedJogo(jogo);
-                setOpenMenuNiveis(true);
+                setOpenModalInfo(true);
               }}
             >
               <CardActionArea sx={style.cardContent}>
                 <CardMedia
                   component="img"
-                  sx={{ height: 150, width: 150, aspectRatio: 1 }}
+                  sx={{ width: '40%', aspectRatio: 1 }}
                   image={jogo.logo}
                   alt={jogo.nome}
                 />
@@ -47,9 +52,10 @@ const HomePage = () => {
           </Grid>
         ))}
       </Grid>
-      <ModalNiveis
-        isOpen={openMenuNiveis}
-        onClose={() => setOpenMenuNiveis(false)}
+      <ModalInfoJogos
+        isOpen={openModalInfo}
+        onClose={() => setOpenModalInfo(false)}
+        path={selectedJogo?.path ?? ""}
       />
     </Box>
   );
@@ -67,15 +73,15 @@ const style = {
   card: {
     display: "flex",
     borderRadius: 8,
-    p: 1,
     flexDirection: "column",
+    boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.2)",
+    border: `1px solid ${colors.deepPurple[100]}`
   },
   cardContent: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    height: 220,
   },
 };
 

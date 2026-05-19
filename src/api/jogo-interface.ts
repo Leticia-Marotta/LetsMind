@@ -8,6 +8,7 @@ export interface IJogos {
   nome: string;
   logo: string;
   path: string;
+  sobre: string;
   niveis: INiveis[];
 }
 
