@@ -3,7 +3,7 @@
         "id": 1,
         "nome": "Teste de Trilhas",
         "logo": "/TesteTrilhas.png",
-        "path": "/teste-trilhas",
+        "path": "/testeDeTrilhas",
         "descricao": "Conecte os elementos na ordem correta, seguindo a sequência de letras e números.",
         "sobre": "O Teste de Trilhas estimula a atenção, a memória de trabalho e a flexibilidade mental. Ao exigir que o usuário conecte elementos em uma sequência específica o cérebro é incentivado a se adaptar e organizar informações de forma eficiente. Essa prática contribui para melhorar o raciocínio, a concentração e o controle executivo, habilidades fundamentais para a realização de tarefas do dia a dia.",
         "niveis": [

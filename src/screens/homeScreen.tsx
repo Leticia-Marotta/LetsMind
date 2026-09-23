@@ -1,84 +1,70 @@
 "use client";
 
-import React from "react";
-
 import {
   Box,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
+  Chip,
   Grid,
   Typography,
-  Button,
-  Divider,
 } from "@mui/material";
 
-import {
-  HomeRounded,
-  SportsEsportsRounded,
-  AssignmentRounded,
-  InfoRounded,
-  LogoutRounded,
-  ArrowForwardRounded,
-} from "@mui/icons-material";
+import { ArrowForwardRounded } from "@mui/icons-material";
 
 import games from "../data/games.json";
 
 import { SxProps, Theme } from "@mui/material/styles";
+import { useContext } from "react";
+import { AppContext } from "../contexts/AppContext";
+import Link from "next/link";
 
 const HomeScreen = () => {
+  const { userName } = useContext(AppContext);
   return (
-    <Box sx={style.page}>
-      <Box sx={style.content}>
-        <Box sx={style.header}>
-          <Typography sx={style.title}>Olá!</Typography>
-          <Typography sx={style.subtitle}>
-            Divirta-se enquanto trabalha habilidades como memória, atenção,
-            percepção e linguagem.
-          </Typography>
-        </Box>
+    <Box sx={style.content}>
+      <Box sx={style.header}>
+        <Typography sx={style.title}>Olá, {userName}!</Typography>
+        <Typography sx={style.subtitle}>
+          Divirta-se enquanto trabalha habilidades como memória, atenção,
+          percepção e linguagem.
+        </Typography>
+        <Typography sx={style.sectionTitle}>Vamos treinar?</Typography>
+      </Box>
 
-        <Box sx={style.sectionHeader}>
-          <SportsEsportsRounded sx={style.sectionIcon} />
-          <Typography sx={style.sectionTitle}>Jogos disponíveis</Typography>
-        </Box>
+      <Grid container spacing={2.5}>
+        {games.map((jogo) => (
+          <Grid
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4,
+              lg: 4,
+            }}
+            key={jogo.id}
+          >
+            <Card sx={style.card}>
+              <CardActionArea sx={style.cardAction}>
+                <Box sx={style.imageContainer}>
+                  <CardMedia
+                    component="img"
+                    image={jogo.logo}
+                    alt={jogo.nome}
+                    sx={style.gameImage}
+                  />
 
-        <Grid container spacing={2.5}>
-          {games.map((jogo) => (
-            <Grid
-              size={{
-                xs: 12,
-                sm: 6,
-                md: 4,
-                lg: 4,
-              }}
-              key={jogo.id}
-            >
-              <Card sx={style.card}>
-                <CardActionArea
-                  sx={style.cardAction}
-                  onClick={() => {
-                    // setSelectedJogo(jogo);
-                    // setOpenModalInfo(true);
-                  }}
-                >
-                  <Box sx={style.imageContainer}>
-                    <CardMedia
-                      component="img"
-                      image={jogo.logo}
-                      alt={jogo.nome}
-                      sx={style.gameImage}
-                    />
-                  </Box>
+                  {jogo.id != 1 && <Box sx={style.comingSoon}>Em breve</Box>}
+                </Box>
 
-                  <CardContent sx={style.cardContent}>
-                    <Typography sx={style.gameTitle}>{jogo.nome}</Typography>
+                <CardContent sx={style.cardContent}>
+                  <Typography sx={style.gameTitle}>{jogo.nome}</Typography>
 
-                    <Typography sx={style.gameDescription}>
-                      {jogo.descricao}
-                    </Typography>
+                  <Typography sx={style.gameDescription}>
+                    {jogo.descricao}
+                  </Typography>
 
+                  <Link href={jogo.path}>
                     <Box sx={style.cardFooter}>
                       <Typography sx={style.playText}>Começar</Typography>
 
@@ -86,36 +72,20 @@ const HomeScreen = () => {
                         <ArrowForwardRounded />
                       </Box>
                     </Box>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-
-        <Box sx={style.footer}>
-          <Typography>
-            Pequenos avanços também são grandes conquistas! 💜
-          </Typography>
-        </Box>
-      </Box>
+                  </Link>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   );
 };
 
-/* =====================================================
-   ESTILOS
-===================================================== */
-
 const style: Record<string, SxProps<Theme>> = {
-  page: {
-    minHeight: "100vh",
-    width: "100%",
-    display: "flex",
-    backgroundColor: "#F8F7FC",
-  },
-
   content: {
+    backgroundColor: "#F3EEFA",
     flex: 1,
     minWidth: 0,
     padding: 3,
@@ -233,6 +203,22 @@ const style: Record<string, SxProps<Theme>> = {
     pt: 1,
   },
 
+  comingSoon: {
+    position: "absolute",
+    top: 18,
+    right: -35,
+    width: 130,
+    textAlign: "center",
+    backgroundColor: "#cb6ce6",
+    color: "#fff",
+    fontWeight: 600,
+    fontSize: "12px",
+    padding: "6px 0",
+    transform: "rotate(45deg)",
+    boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.15)",
+    zIndex: 2,
+  },
+
   gameTitle: {
     fontSize: 17,
     fontWeight: 800,
@@ -258,14 +244,14 @@ const style: Record<string, SxProps<Theme>> = {
   playText: {
     fontSize: 13,
     fontWeight: 700,
-    color: "#65749A",
+    color: "#cb6ce6",
   },
 
   playButton: {
     width: 36,
     height: 36,
     borderRadius: "50%",
-    backgroundColor: "#8D7AE8",
+    backgroundColor: "#cb6ce6",
     color: "#FFFFFF",
     display: "flex",
     alignItems: "center",

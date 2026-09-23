@@ -1,10 +1,17 @@
 "use client";
 import { Box, Card, colors, TextField, Typography } from "@mui/material";
 import loginBackground from "../../public/loginBackground.png";
-import React from "react";
+import React, { useContext } from "react";
 import Link from "next/link";
+import { AppContext } from "../contexts/AppContext";
 
 const LoginScreen = () => {
+  const { userName, setUserName } = useContext(AppContext);
+
+  const saveName = () => {
+    // Salva o nome do usuário no localStorage
+    localStorage.setItem("userName", userName);
+  };
   return (
     <Box sx={style.box}>
       <Card sx={style.card}>
@@ -15,8 +22,12 @@ const LoginScreen = () => {
           Digite seu nome de usuário para entrar no Let's Mind e continuar sua
           jornada de treinamento e diversão!
         </Typography>
-        <TextField label="Nome do usuário" sx={style.input} />
-        <Link style={style.button} href="/home">
+        <TextField
+          label="Nome do usuário"
+          sx={style.input}
+          onChange={(e) => setUserName(e.target.value)}
+        />
+        <Link style={style.button} href="/home" onClick={saveName}>
           Entrar
         </Link>
       </Card>
