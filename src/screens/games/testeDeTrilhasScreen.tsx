@@ -11,6 +11,7 @@ import { Stage, Layer, Text, Line } from "react-konva";
 import { AppContext } from "@/src/contexts/AppContext";
 import { ArrowBack } from "@mui/icons-material";
 import Link from "next/link";
+import ModalFimJogos from "@/src/modais/FimJogoModal";
 
 type Point = {
   x: number;
@@ -32,7 +33,6 @@ const TesteTrilhas = () => {
   const [endTime, setEndTime] = useState<Date>(new Date());
   const [erros, setErros] = useState<number>(0);
 
-  const [openModal, setOpenModal] = useState<boolean>(false);
   const [openFinishModal, setOpenFinishModal] = useState<boolean>(false);
 
   const generatePoints = () => {
@@ -95,10 +95,8 @@ const TesteTrilhas = () => {
       setEndTime(new Date());
 
       if (nivel === "facil") {
-        setOpenModal(true);
         setNivel("medio");
       } else if (nivel === "medio") {
-        setOpenModal(true);
         setNivel("dificil");
       } else if (nivel === "dificil") {
         setEndTime(new Date());
@@ -292,16 +290,6 @@ const TesteTrilhas = () => {
         </Box>
       </Box>
 
-      {/*
-      <ModalInfoJogos
-        isOpen={openModal}
-        onClose={() => {
-          setOpenModal(false);
-        }}
-        path={selectedJogo.path}
-      />
-
-
       <ModalFimJogos
         endTime={endTime}
         startTime={startTime}
@@ -312,7 +300,7 @@ const TesteTrilhas = () => {
         erros={erros}
         dicaFonetica={0}
         dicaSemantica={0}
-      /> */}
+      />
     </Box>
   );
 };

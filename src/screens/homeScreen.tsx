@@ -19,9 +19,12 @@ import { SxProps, Theme } from "@mui/material/styles";
 import { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
 import Link from "next/link";
+import { IJogos } from "../interfaces/jogoInterface";
 
 const HomeScreen = () => {
-  const { userName } = useContext(AppContext);
+  const { userName, setSelectedJogo } = useContext(AppContext);
+
+  const jogos = games as IJogos[];
   return (
     <Box sx={style.content}>
       <Box sx={style.header}>
@@ -34,7 +37,7 @@ const HomeScreen = () => {
       </Box>
 
       <Grid container spacing={2.5}>
-        {games.map((jogo) => (
+        {jogos.map((jogo) => (
           <Grid
             size={{
               xs: 12,
@@ -64,7 +67,7 @@ const HomeScreen = () => {
                     {jogo.descricao}
                   </Typography>
 
-                  <Link href={jogo.path}>
+                  <Link href={jogo.path} onClick={() => setSelectedJogo(jogo)}>
                     <Box sx={style.cardFooter}>
                       <Typography sx={style.playText}>Começar</Typography>
 
